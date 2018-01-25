@@ -20,7 +20,7 @@ router.get('/', async (ctx, next) => {
 
 router.post('/', async (ctx, next) => {
   let Comment = mongoose.model('Comment')
-  let topicId = ctx.query.topic
+  let topicId = ctx.query.topic || ''
   let req = ctx.request.body
   req.topic = topicId
   if (req) {

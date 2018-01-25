@@ -1,6 +1,6 @@
 import koaBody from 'koa-bodyparser'
 import session from 'koa-session'
-const cors = require('koa2-cors')
+import cors from 'koa2-cors'
 
 export const addBody = app => {
   app.use(koaBody())

@@ -4,7 +4,7 @@
   "pass":"Zhuoying@1101",
   "port": 3000,
   "base": "http://localhost:3000",
-  "SITE_ROOT_URL": "http://blissr.net",
+  "SITE_ROOT_URL": "http://suga.s1.natapp.cc",
   "wechat": {
       "appID": "wx10421187fec899ac",
       "appSecret": "6634cf31f558207df476a5169f59e637",
@@ -16,5 +16,9 @@
       "SK": "e3A9VVEt4KP8XJfkTKwXuvmOzdpk36yOK-O5m-cE",
       "bucket": "blissr-test",
       "qiniuURL": "http://p085n165m.bkt.clouddn.com"
+  },
+  "leancloud": {
+    "APP_ID" :"UefuCY50vFnjIgf345m2jIlp-gzGzoHsz",
+    "APP_KEY" : "FSimC0hWAmBONRBrPG5yaTwE"
   }
 }

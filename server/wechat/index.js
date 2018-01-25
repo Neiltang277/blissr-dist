@@ -1,10 +1,7 @@
-import mongoose from 'mongoose'
 import config from '../config'
 import Wechat from '../wechat/lib'
-// import WechatOAuth from '../wechat-lib/oauth'
-
-const Token = mongoose.model('Token')
-const Ticket = mongoose.model('Ticket')
+import WechatOAuth from '../wechat/lib/oauth'
+import AV from 'leancloud-storage'
 
 const wechatConfig = {
   wechat: {
@@ -12,16 +9,29 @@ const wechatConfig = {
     appSecret: config.wechat.appSecret,
     token: config.wechat.token,
     getAccessToken: async () => {
-      await Token.getAccessToken()
+      let token = new AV.Query('Token')
+      await token.find()
+      // await Token.getAccessToken()
     },
     saveAccessToken: async (data) => {
-      await Token.saveAccessToken(data)
+      let token = new AV.Token()
+      token.set('access_token', data.access_token)
+      token.set('expires_in', data.expires_in)
+      await token.save()
+      // await Token.saveAccessToken(data)
     },
     getTicket: async () => {
-      await Ticket.getTicket()
+      let ticket = new AV.Query('Ticket')
+      await ticket.find()
+      // await Ticket.getTicket()
     },
     saveTicket: async (data) => {
-      await Ticket.saveTicket(data)
+      let ticket = new AV.Ticket()
+      ticket.set('name', data.name)
+      ticket.set('ticket', data.ticket)
+      ticket.set('expires_in', data.expires_in)
+      await ticket.save()
+      // await Ticket.saveTicket(data)
     }
   }
 }
@@ -29,4 +39,9 @@ const wechatConfig = {
 export const getWechat = () => {
   const wechatClient = new Wechat(wechatConfig.wechat)
   return wechatClient
+}
+
+export const getOAuth = () => {
+  const oauth = new WechatOAuth(wechatConfig.wechat)
+  return oauth
 }

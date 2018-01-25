@@ -1,6 +1,6 @@
 import Router from 'koa-router'
-const dbHelper = require('../helpers/dbHelper')
-const mongoose = require('mongoose')
+import Topic from '../database/leanstorage/topic'
+import AV from 'leancloud-storage'
 
 const router = new Router()
 
@@ -10,64 +10,33 @@ const router = new Router()
  * @param per_page
  */
 router.get('/', async (ctx, next) => {
-  let Topic = mongoose.model('Topic')
-  let page = ctx.query.page || 1
-  let perPage = ctx.query.per_page || 10
-  let data = await dbHelper.pageQuery(page, perPage, Topic, 'User', {}, {})
-  ctx.body = data
+  let query = new AV.Query('Topic')
+  ctx.body = await query.find()
 })
 
 router.post('/', async (ctx, next) => {
-  let Topic = mongoose.model('Topic')
-  let req = ctx.request.body
-  if (req) {
-    new Topic(req).save()
-  }
-  ctx.status = 201
+  let content = ctx.request.body
+  new Topic({
+    title: content.title,
+    subject: content.subject,
+    summary: content.summary,
+    detail: content.detail,
+    members: content.memebers,
+    advocator: content.advocator,
+    comments: content.comments
+  }).save().then((topic) => {
+    console.log(topic)
+    ctx.body = topic
+  }).catch((error) => console.log(error))
 })
 
-router.get('/:id', async (ctx, next) => {
-  let Topic = mongoose.model('Topic')
-  let id = ctx.params.id
-  let res = await Topic.findOne({
-    _id: id
-  }).exec()
-
-  if (res) {
-    ctx.body = res
-  } else {
-    ctx.body = {}
-  }
+router.get('/detail/:id', async (ctx, next) => {
 })
 
-router.put('/:id', async (ctx, next) => {
-  let Topic = mongoose.model('Topic')
-  let req = ctx.request.body
-  let id = ctx.params.id
-  let res = await Topic.update({
-    _id: id
-  }, req).exec()
-
-  if (res) {
-    ctx.status = 201
-    ctx.body = res
-  } else {
-    ctx.body = 200
-  }
+router.put('/comment/:id', async (ctx, next) => {
 })
 
-router.delete('/:id', async (ctx, next) => {
-  let Topic = mongoose.model('Topic')
-  let id = ctx.params.id
-  let res = await Topic.remove({
-    _id: id
-  }).exec()
-
-  if (res) {
-    ctx.status = 204
-  } else {
-    ctx.status = 200
-  }
+router.delete('/detail/:id', async (ctx, next) => {
 })
 
 module.exports = router

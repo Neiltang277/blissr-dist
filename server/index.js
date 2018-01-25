@@ -7,6 +7,8 @@ import R from 'ramda'
 import {
   resolve
 } from 'path'
+import AV from 'leancloud-storage'
+import opts from './config'
 
 // import { router } from './middleware/router'
 // import { database } from './middleware/database'
@@ -14,8 +16,8 @@ import {
 const r = path => resolve(__dirname, path)
 const host = process.env.HOST || '127.0.0.1'
 const port = process.env.PORT || 3000
-// const MIDDLEWARE = ['general', 'router']
-const MIDDLEWARE = ['database', 'general', 'router']
+const MIDDLEWARE = ['general', 'router']
+// const MIDDLEWARE = ['database', 'general', 'router']
 
 const useMiddleware = (app) => {
   // 中间件的个数不定，通过 Ramda 的特性，从右往左进行函数组合，右侧函数的返回结果总是左侧函数的输入参数
@@ -48,6 +50,14 @@ async function start() {
   }
 
   await useMiddleware(app)(MIDDLEWARE)
+  console.log({
+    appId: opts.leancloud.APP_ID,
+    appKey: opts.leancloud.APP_KEY
+  })
+  await AV.init({
+    appId: opts.leancloud.APP_ID,
+    appKey: opts.leancloud.APP_KEY
+  })
 
   app.use(async (ctx, next) => {
     await next()

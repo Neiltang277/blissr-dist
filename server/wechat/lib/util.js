@@ -99,7 +99,7 @@ function raw (args) {
   return str.substr(1)
 }
 
-function signIt (nonce, ticket, timestamp, url) {
+function signIt(nonce, ticket, timestamp, url) {
   const ret = {
     jsapi_ticket: ticket,
     nonceStr: nonce,
@@ -113,7 +113,7 @@ function signIt (nonce, ticket, timestamp, url) {
   return sha
 }
 
-function sign (ticket, url) {
+function sign(ticket, url) {
   const nonce = createNonce()
   const timestamp = createTimestamp()
   const signature = signIt(nonce, ticket, timestamp, url)
