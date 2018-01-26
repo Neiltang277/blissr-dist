@@ -1,26 +1,35 @@
 <template lang="pug">
   .main-questions
     .question(v-for='question in content.questions' v-show='showIndex(question.index)')
-      .title(v-html='question.title')
-      .question-img(v-if='question.image !== ""')
-        img(v-lazy='formatImg(question.image)', style='width:300px;')
-      //- .selections-type1(v-show='question.index === 1')
-        .selection-type1(v-for='(selection,index) in question.selections' :key='index' @click='selectItem(question, selection.index)' :class='{selected: question.selected === selection.index}')
-          img(v-lazy='selection.image')
-          .option {{ selection.option }}
+      .progress Question {{ indicator }} of {{countQuestions-1}}
+      .blackboard
+        .title(v-html='question.title')
+        .question-img(v-if='question.image !== ""')
+          img(v-lazy='formatImg(question.image)', style='width:100%;')
+        //- .selections-type1(v-show='question.index === 1')
+          .selection-type1(v-for='(selection,index) in question.selections' :key='index' @click='selectItem(question, selection.index)' :class='{selected: question.selected === selection.index}')
+            img(v-lazy='selection.image')
+            .option {{ selection.option }}
       .selections-type2
         .selection-type2(v-for='(selection,index) in question.selections' :key='index' @click='selectItem(question, selection.index)' :class='{selected: question.selected === selection.index}')
-          .option {{selection.index}}  {{ selection.option }}
-          img(v-if='selection.image !== ""',v-lazy='formatImg(selection.image)', style='width:100px;height:100px;margin-left: 10px')
+          .option {{ selection.option }}
+            img(v-if='selection.image !== ""',v-lazy='formatImg(selection.image)', style='width:100px;height:100px;margin-left: 10px;vertical-align: bottom; margin: 10px 0;')
+      .bottom-blank
       .button
-        mt-button(v-show='currentIndex > 1' type='default' size='normal' style='margin-right:20px' @click.native='previousQuestion')
-          .btn-text 上一题
-        mt-button(v-show='currentIndex < countQuestions && currentIndex > 1' type='primary' size='normal' @click.native='nextQuestion' :disabled='!isSelect')
-          .btn-text 下一题
-        mt-button(v-show='currentIndex === 1' type='primary' size='large' @click.native='nextQuestion' :disabled='!isSelect')
-          .btn-text 下一题
-        mt-button(v-show='currentIndex === countQuestions' type='primary' size='normal' @click.native='submitQuiz' :disabled='!isSelect')
-          .btn-text 查看结果
+        mt-button.button-clear(v-show='currentIndex > 1' type='primary' size='normal' style='margin-right:20px' @click.native='previousQuestion')
+          .btn-text-left
+            img.icon-arrow(:src='leftArrow')
+            | 上一题
+        mt-button.button-clear(v-show='currentIndex < countQuestions && currentIndex > 1' type='primary' size='normal' @click.native='nextQuestion' :disabled='!isSelect')
+          .btn-text-right
+            | 下一题
+            img.icon-arrow(:src='rightArrow')
+        mt-button.button-clear-full(v-show='currentIndex === 1' type='primary' size='large' @click.native='nextQuestion' :disabled='!isSelect')
+          .btn-text-right
+            | 下一题
+            img.icon-arrow(:src='rightArrow')
+        mt-button.button-clear(v-show='currentIndex === countQuestions' type='primary' size='normal' @click.native='submitQuiz' :disabled='!isSelect')
+          .btn-text-right 查看结果
 </template>
 <script>
 import content from '~/static/assets/quiz/testType.json'
@@ -30,11 +39,13 @@ import { Button, Lazyload } from 'mint-ui'
 export default {
   data() {
     return {
+      indicator: 1,
       currentIndex: 1,
       content: {},
       finalAnswer: {},
       type: 1,
-      isSelect: false
+      isSelect: false,
+      inputName: ''
     }
   },
   components: {
@@ -43,6 +54,9 @@ export default {
   },
   beforeMount: function () {
     this.content = content
+    this.leftArrow = require('static/assets/icon/left.png')
+    this.rightArrow = require('static/assets/icon/right.png')
+    this.inputName = this.$route.query.inputName
   },
   computed: {
     countQuestions() {
@@ -60,13 +74,8 @@ export default {
   },
   watch: {
     currentIndex: function (val, oldval) {
-      // console.log(val)
-      // console.log(oldval)
-      if (this.type === 1 && val === 6) {
-        this.currentIndex += 1
-      } else if (this.type === 0 && val === 5) {
-        this.currentIndex += 1
-      }
+      console.log(val)
+      console.log(oldval)
     }
   },
   methods: {
@@ -87,12 +96,21 @@ export default {
     nextQuestion() {
       this.isSelect = false
       this.currentIndex = this.currentIndex + 1
+      if (this.type === 1 && this.currentIndex === 6) {
+        this.currentIndex = 7
+      } else if (this.type === 0 && this.currentIndex === 5) {
+        this.currentIndex = 6
+      }
+      this.indicator += 1
     },
     previousQuestion() {
-      if ((this.type === 0 && this.currentIndex === 6) || (this.type === 1 && this.currentIndex === 7)) {
-        this.currentIndex = this.currentIndex - 2
+      if (this.type === 0 && this.currentIndex === 6) {
+        this.currentIndex = 5
+      } else if (this.type === 1 && this.currentIndex === 7) {
+        this.currentIndex = 6
       }
       this.currentIndex = this.currentIndex - 1
+      this.indicator = this.indicator - 1
       this.isSelect = true
     },
     selectItem(question, selection) {
@@ -146,6 +164,7 @@ export default {
       this.$router.push({
         path: '/quiz/test_type/answer',
         query: {
+          inputName: this.inputName,
           type: this.type,
           result: result
         }
@@ -168,14 +187,27 @@ export default {
 .main-questions {
   height: 100%;
   width: 100%;
+  padding: 5%;
+}
+.progress {
+  text-align: center;
+  font-size: 24px;
+}
+.blackboard {
+  background: -webkit-linear-gradient(#A9A5B4,#2C2448); /* Safari 5.1 - 6.0 */
+  background: -o-linear-gradient(#A9A5B4,#2C2448); /* Opera 11.1 - 12.0 */
+  background: -moz-linear-gradient(#A9A5B4,#2C2448); /* Firefox 3.6 - 15 */
+  background: linear-gradient(#A9A5B4,#2C2448); /* 标准的语法 */
   padding: 10%;
+  color: white;
+  margin-top: 5%;
+  border-radius: 6px;
 }
 .question {
   height: 100%;
   width: 100%;
 }
 .title {
-  margin-top: 10%;
   font-size: 24px;
   line-height: 30px;
   text-align: center;
@@ -197,33 +229,70 @@ export default {
 }
 .selections-type2 .option{
   display: inline-block;
-  line-height: 20px;
+  line-height: 50px;
   vertical-align: text-bottom;
-  margin-left: 10px;
+  height: 100%;
+  border: #bfbfbf 1px solid;
+  width: 100%;
+  border-radius: 6px;
+  text-align: center;
+
 }
 
 .selection-type2 {
   width: 100%;
-  margin-top: 10%;
+  margin-top: 5%;
+  text-align: center;
 }
 
 .button {
   position: fixed;
   display: flex;
+  background-color: white;
   flex-direction: row;
-  width: 280px;
-  bottom: 20px;
+  width: 100%;
+  bottom: 0px;
+  height: 50px;
   left: 50%;
-  margin-left: -140px;
+  margin-left: -50%;
+  border-top: solid 1px solid #bfbfbf;
 }
-.btn-text {
+.button-clear {
+  background: white;
+  width: 49%;
+  padding: 0;
+}
+.button-clear-full {
+  background: white;
+  padding: 0;
+}
+.btn-text-right {
   margin: 10px 20px;
+  color: #EF9F58;
+  font-weight: bold;
+}
+.btn-text-left {
+  margin: 10px 20px;
+  color: #bfbfbf;
+  font-weight: bold;
 }
 .selected {
-  background-color: aqua;
+  background-color: #EF9F58;
+  border-radius: 6px;
+  color: white;
+}
+.icon-arrow {
+  width: 21px;
+  display: inline-block;
+  margin: 0 10px;
+  vertical-align: bottom;
 }
 .question-img{
   text-align: center;
   margin-top: 20px;
+}
+.bottom-blank {
+  height: 60px;
+  display: block;
 }
 </style>

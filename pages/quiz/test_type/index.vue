@@ -1,9 +1,11 @@
 <template lang="pug">
   .main-index
+    img.img-logo(v-lazy='logo')
+    .subtitle -- 测一测 --
     .title {{ content.title }}
-    .summary {{ content.summary }}
-    .carousels
-      mt-swipe(:show-indicators='false')
+    //- .summary {{ content.summary }}
+    img.carousels(v-lazy='image')
+      //- mt-swipe(:show-indicators='false')
         mt-swipe-item(v-for='(item, index) in content.images' :key="index")
           img(v-lazy='item')
     .button-group
@@ -18,7 +20,9 @@ import content from '~/static/assets/quiz/testType.json'
 export default {
   data() {
     return {
-      inputName: ''
+      inputName: '',
+      image: '',
+      logo: ''
     }
   },
   components: {
@@ -33,9 +37,10 @@ export default {
       return content
     }
   },
-  // beforeCreate: function () {
-  //   console.log(this.$route.query)
-  // },
+  beforeMount: function () {
+    this.image = require('static/assets/icon/main.png')
+    this.logo = require('static/assets/quiz/images/blissr100.png')
+  },
   methods: {
     gotoTest() {
       let that = this
@@ -55,11 +60,18 @@ export default {
   height: 100%;
   width: 100%;
   padding: 10%;
+  text-align: center;
+}
+.subtitle {
+  margin-bottom: 5%;
+  color: #2C2448;
 }
 .title {
-  margin-top: 10%;
-  font-size: 50px;
+  margin-bottom: 5%;
+  font-size: 36px;
   text-align: center;
+  color: #EF9F58;
+  font-weight: bold;
 }
 
 .summary {
@@ -68,6 +80,11 @@ export default {
 }
 
 .carousels {
+  background: -webkit-linear-gradient(#A9A5B4,#2C2448); /* Safari 5.1 - 6.0 */
+  background: -o-linear-gradient(#A9A5B4,#2C2448); /* Opera 11.1 - 12.0 */
+  background: -moz-linear-gradient(#A9A5B4,#2C2448); /* Firefox 3.6 - 15 */
+  background: linear-gradient(#A9A5B4,#2C2448); /* 标准的语法 */
+  padding: 5%;
   text-align: center;
   width: 100%;
   height: 200px;
@@ -84,16 +101,13 @@ image[lazy=loading] {
   border-radius: 6px;
 }
 .button-group {
-  position: fixed;
-  width: 260px;
-  bottom: 50px;
-  left: 50%;
-  margin-left: -130px;
+  margin-top: 20%;
   text-align: center;
 }
 .btn {
   width: 100%;
   margin: 4px;
+  background-color: #EF9F58;
 }
 .btn-text {
   margin: 10px 8px;

@@ -1,27 +1,27 @@
 <template lang="pug">
   .main-answer
-    #output(v-show='!showPreview')
+    #output.print-set(v-show='!showPreview')
       .card-answer
-        .header 测试结果
+        //- .header 测试结果
         .body
-          .username {{ inputName }}
-          .title 你是一只: {{ answerT.title }}
+          .username {{ inputName }} 是一只:
+          .title {{ answerT.title }}
           //- .img-match
           //-   img(v-lazy='answerT.image' style='width:100%')
           .desc {{ answerT.desc }}
       .share-footer(v-show='isShare')
         .qrcode
-          img(:src='qrcode')
+          img(:src='qrcode', style='background-color: white')
         .quiz-info
-          .quiz-title {{ content.title }}
+          .quiz-title 快来测一测你的隐藏属性
           .quiz-guide {{ guide }}
         .logo-blissr
-          img(:src='blissrLogo')
+          img(:src='blissrLogo', style='background-color: white')
     .footer(v-show='!isShare')
-      mt-button.btn(type='primary' size='normal' @click.native='readMore')
+      mt-button.btn.share(type='primary' size='large' @click.native='shareIt')
+        .btn-text(style='color: #EF9F58') 分享一下
+      mt-button.btn.readmore(type='primary' size='large' @click.native='readMore')
         .btn-text 详细解读
-      mt-button.btn(type='primary' size='normal' @click.native='shareIt')
-        .btn-text 分享一下
       .btn-plain(@click='resetQuiz') 重新测试
     .card-share(v-show='showPreview')
       .preview-guide
@@ -39,11 +39,12 @@ import content from '~/static/assets/quiz/testType.json'
 export default {
   data() {
     return {
-      guide: '长按二维码识别扫一扫',
+      guide: '长按二维码识别，立即测试',
       isShare: false,
       showPreview: false,
       dataURL: '',
       username: '',
+      inputName: '',
       answerT: {
         title: '小奶狗',
         image: 'http://dummyimage.com/300x200',
@@ -52,8 +53,9 @@ export default {
     }
   },
   beforeMount: function () {
-    let {type, result} = this.$route.query
-    console.log({type, result})
+    let {inputName, type, result} = this.$route.query
+    console.log({inputName, type, result})
+    this.inputName = inputName
     if (type === 1) {
       this.answerT = content.answers.boys['b' + result]
     } else {
@@ -74,10 +76,10 @@ export default {
       return content
     },
     blissrLogo() {
-      return require('static/assets/quiz/images/blissr100.png')
+      return require('static/assets/quiz/images/blissr50.png')
     },
     qrcode() {
-      return require('static/assets/quiz/images/blissr100.png')
+      return require('static/assets/quiz/images/blissr50.png')
     }
   },
   methods: {
@@ -113,9 +115,16 @@ export default {
 }
 </script>
 <style scoped>
-.card-answer {
-  padding: 10%;
+.main-answer {
+  /* position: absolute;
+  background-size: cover;
+  top: 0px;
+  bottom: 0px;
+  height: 100%;
+  width: 100%;
+  background-image: url('../../../static/assets/quiz/images/bg.jpg') */
 }
+
 .header {
   font-size: 36px;
   text-align: center;
@@ -123,16 +132,19 @@ export default {
 }
 
 .username {
-  font-size: 36px;
+  font-size: 16px;
   text-align: center;
-  margin-bottom: 40px;
+  margin-top: 50px;
+  margin-bottom: 20px;
+  color: white;
 }
 
 .title {
-  font-size: 24px;
+  font-size: 32px;
   text-align: center;
   line-height: 30px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+  color: #EF9F58
 }
 .img-match {
   text-align: center;
@@ -140,21 +152,30 @@ export default {
 }
 
 .desc {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 20px;
+  color: white;
+  line-height: 36px;
+  text-align: center;
 }
 
 .footer {
-  position: fixed;
-  width: 260px;
-  bottom: 10px;
-  left: 50%;
-  margin-left: -130px;
+  width: 100%;
+  padding: 0 10%;
   text-align: center;
+  background: white;
 }
 .btn {
-  width: 45%;
+  width: 100%;
   margin: 4px;
+  border-radius: 30px;
+}
+.share {
+  background: transparent;
+  border: 1px solid #EF9F58;
+}
+.readmore {
+  background: #EF9F58;
 }
 .btn-text {
   margin: 10px 8px;
@@ -167,7 +188,7 @@ export default {
 .qrcode {
   width: 50px;
   height: 50px;
-  margin-left: 10px;
+  margin: 2px;
 }
 
 .quiz-info {
@@ -178,18 +199,19 @@ export default {
   height: 50px;
 }
 .quiz-title {
-  font-size: 18px;
+  font-size: 14px;
   line-height: 28px;
+  font-weight: bold;
 }
 
 .quiz-guide {
-font-size: 14px;
+font-size: 12px;
 }
 
 .logo-blissr {
   width: 50px;
   height: 50px;
-  margin-right: 10px;
+  margin: 2px;
 }
 
 .share-footer {
@@ -199,18 +221,27 @@ font-size: 14px;
   display: flex;
   flex-direction: row;
   margin-top: 40px;
+  color: white;
 }
 
 .print-set {
-  margin: 10%
+  margin: 10%;
+  background-size: cover;
+  background-image: url('../../../static/assets/quiz/images/bg.jpg')
+}
+
+.card-answer {
+  padding: 20px 20px 20px;
 }
 
 .preview-guide {
   text-align: center;
 }
 .guide-text {
-  font-size: 16px;
+  font-size: 18px;
   line-height: 60px;
+  color: #EF9F58;
+  font-weight: bold;
   border-bottom: 1px solid grey;
 }
 

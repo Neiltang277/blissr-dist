@@ -1,11 +1,8 @@
 {
   "blissr":"这是一个非常帅的公众号",
-  "title": "谁是啥啥啥",
+  "title": "你的隐藏属性",
   "summary": "这是一个非常非常非常非常非常非常非常非常非常非常有意思的测试",
   "images": [
-    "http://dummyimage.com/300x200",
-    "http://dummyimage.com/300x200",
-    "http://dummyimage.com/300x200",
     "http://dummyimage.com/300x200"
   ],
   "questions":[
