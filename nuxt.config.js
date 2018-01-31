@@ -15,9 +15,9 @@ module.exports = {
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' }
     ]
   },
-  plugins: [{src: '~/plugins/mint.js', ssr: true}],
+  plugins: [{src: '~/plugins/mint.js', ssr: true}, {src: '~/plugins/moment.js', ssr: true}],
   // css: [
-    // '~/static/style/app.styl'
+  // '~/static/style/app.styl'
   // ],
   /*
   ** Customize the progress bar color
@@ -28,7 +28,8 @@ module.exports = {
   */
   build: {
     vendor: [
-      '~/plugins/mint.js'
+      '~/plugins/mint.js',
+      '~/plugins/moment.js'
     ],
     extractCSS: true,
     /*

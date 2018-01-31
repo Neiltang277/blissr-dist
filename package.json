@@ -32,6 +32,7 @@
     "leancloud-storage": "^3.5.0",
     "lodash": "^4.17.4",
     "mint-ui": "^2.2.13",
+    "moment": "^2.20.1",
     "mongoose": "^4.13.9",
     "nodemon": "^1.14.11",
     "nuxt": "^1.0.0",

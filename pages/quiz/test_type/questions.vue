@@ -1,8 +1,8 @@
 <template lang="pug">
   .main-questions
     .question(v-for='question in content.questions' v-show='showIndex(question.index)')
-      .progress Question {{ indicator }} of {{countQuestions-1}}
-      .blackboard
+      .progress(:class='type ? "text-girl" : "text-boy"') Question {{ indicator }} of {{countQuestions-1}}
+      .blackboard(:class="type === 1 ? 'bg-boy' : 'bg-girl' ")
         .title(v-html='question.title')
         .question-img(v-if='question.image !== ""')
           img(v-lazy='formatImg(question.image)', style='width:100%;')
@@ -11,7 +11,7 @@
             img(v-lazy='selection.image')
             .option {{ selection.option }}
       .selections-type2
-        .selection-type2(v-for='(selection,index) in question.selections' :key='index' @click='selectItem(question, selection.index)' :class='{selected: question.selected === selection.index}')
+        .selection-type2(v-for='(selection,index) in question.selections' :key='index' @click='selectItem(question, selection.index)' :class=' isSelected(question.selected === selection.index)')
           .option {{ selection.option }}
             img(v-if='selection.image !== ""',v-lazy='formatImg(selection.image)', style='width:100px;height:100px;margin-left: 10px;vertical-align: bottom; margin: 10px 0;')
       .bottom-blank
@@ -21,15 +21,15 @@
             img.icon-arrow(:src='leftArrow')
             | 上一题
         mt-button.button-clear(v-show='currentIndex < countQuestions && currentIndex > 1' type='primary' size='normal' @click.native='nextQuestion' :disabled='!isSelect')
-          .btn-text-right
+          .btn-text-right(:class='type ? "text-boy" : "text-girl"')
             | 下一题
-            img.icon-arrow(:src='rightArrow')
+            img.icon-arrow(:src='type ? rightBoy : rightGirl')
         mt-button.button-clear-full(v-show='currentIndex === 1' type='primary' size='large' @click.native='nextQuestion' :disabled='!isSelect')
-          .btn-text-right
+          .btn-text-right(:class='type ? "text-boy" : "text-girl"')
             | 下一题
-            img.icon-arrow(:src='rightArrow')
+            img.icon-arrow(:src='type ? rightBoy : rightGirl')
         mt-button.button-clear(v-show='currentIndex === countQuestions' type='primary' size='normal' @click.native='submitQuiz' :disabled='!isSelect')
-          .btn-text-right 查看结果
+          .btn-text-right(:class='type ? "text-boy" : "text-girl"') 查看结果
 </template>
 <script>
 import content from '~/static/assets/quiz/testType.json'
@@ -55,7 +55,8 @@ export default {
   beforeMount: function () {
     this.content = content
     this.leftArrow = require('static/assets/icon/left.png')
-    this.rightArrow = require('static/assets/icon/right.png')
+    this.rightGirl = require('static/assets/icon/right-girl.png')
+    this.rightBoy = require('static/assets/icon/right-boy.png')
     this.inputName = this.$route.query.inputName
   },
   computed: {
@@ -79,6 +80,18 @@ export default {
     }
   },
   methods: {
+    isSelected(value) {
+      // let that = this
+      // console.log(this.type)
+      // console.log('isSelecte=' + value)
+      if (value && this.type === 1) {
+        return 'select-boy'
+      } else if (value && this.type === 0) {
+        return 'select-girl'
+      }
+      // selected: question.selected === selection.index
+      // return 'selected'
+    },
     showIndex(selectionIndex) {
       // console.log('selectionIndex=' + selectionIndex)
       // console.log('currentIndex=' + this.currentIndex)
@@ -191,18 +204,48 @@ export default {
 }
 .progress {
   text-align: center;
-  font-size: 24px;
+  font-size: 20px;
+  font-weight: bold;
 }
 .blackboard {
-  background: -webkit-linear-gradient(#A9A5B4,#2C2448); /* Safari 5.1 - 6.0 */
-  background: -o-linear-gradient(#A9A5B4,#2C2448); /* Opera 11.1 - 12.0 */
-  background: -moz-linear-gradient(#A9A5B4,#2C2448); /* Firefox 3.6 - 15 */
-  background: linear-gradient(#A9A5B4,#2C2448); /* 标准的语法 */
   padding: 10%;
   color: white;
   margin-top: 5%;
   border-radius: 6px;
 }
+.bg-boy {
+  background: -webkit-linear-gradient(#FD97A3,#88DFFF); /* Safari 5.1 - 6.0 */
+  background: -o-linear-gradient(#FD97A3,#88DFFF); /* Opera 11.1 - 12.0 */
+  background: -moz-linear-gradient(#FD97A3,#88DFFF); /* Firefox 3.6 - 15 */
+  background: linear-gradient(#FD97A3,#88DFFF); /* 标准的语法 */
+}
+.bg-girl {
+  background: -webkit-linear-gradient(#88DFFF,#FD97A3); /* Safari 5.1 - 6.0 */
+  background: -o-linear-gradient(#88DFFF,#FD97A3); /* Opera 11.1 - 12.0 */
+  background: -moz-linear-gradient(#88DFFF,#FD97A3); /* Firefox 3.6 - 15 */
+  background: linear-gradient(#88DFFF,#FD97A3); /* 标准的语法 */
+}
+.select-boy {
+  color: white;
+  border: 0px;
+  border-radius: 6px;
+  background-color: #88DFFF;
+}
+
+.select-girl {
+  color: white;
+  border: 0px;
+  border-radius: 6px;
+  background-color: #FD97A3;
+}
+
+.selected {
+  background-color: #EF9F58;
+  border-radius: 6px;
+  color: white;
+}
+
+
 .question {
   height: 100%;
   width: 100%;
@@ -268,19 +311,21 @@ export default {
 }
 .btn-text-right {
   margin: 10px 20px;
-  color: #EF9F58;
   font-weight: bold;
 }
+.text-girl {
+  color: #FD97A3;
+}
+.text-boy {
+  color: #88DFFF;
+}
+
 .btn-text-left {
   margin: 10px 20px;
   color: #bfbfbf;
   font-weight: bold;
 }
-.selected {
-  background-color: #EF9F58;
-  border-radius: 6px;
-  color: white;
-}
+
 .icon-arrow {
   width: 21px;
   display: inline-block;

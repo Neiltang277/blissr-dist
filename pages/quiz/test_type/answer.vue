@@ -1,7 +1,7 @@
 <template lang="pug">
   .main-answer
     #output.print-set(v-show='!showPreview')
-      .card-answer
+      .card-answer(:class='type=== "1"? "bg-boy" : "bg-girl"')
         //- .header 测试结果
         .body
           .username {{ inputName }} 是一只:
@@ -9,6 +9,22 @@
           //- .img-match
           //-   img(v-lazy='answerT.image' style='width:100%')
           .desc {{ answerT.desc }}
+      .reply-part
+        .blissr-info
+          .profile
+            img(:src='blissrLogo')
+            .nickname blissr
+          .date {{ dateNow }}
+        .blissr-reply
+          | 回复 {{ inputName }} :
+          |  最与你水乳交融的类型是
+          span(:class='type=== "0"? "bg-boy" : "bg-girl"') 肥肥的胖橘猫
+          | !
+      hr
+      .user-imgs
+        .user-img
+        .user-desc 等41只 肥肥的胖橘猫 给你点赞
+
       .share-footer(v-show='isShare')
         .qrcode
           img(:src='qrcode', style='background-color: white')
@@ -18,10 +34,10 @@
         .logo-blissr
           img(:src='blissrLogo', style='background-color: white')
     .footer(v-show='!isShare')
-      mt-button.btn.share(type='primary' size='large' @click.native='shareIt')
-        .btn-text(style='color: #EF9F58') 分享一下
+      mt-button.btn.share(type='primary' size='large' @click.native='shareIt'  :class='type=== "0"? "bg-boy" : "bg-girl"')
+        .btn-text(style='color: #EF9F58') 肥肥的胖橘猫
       mt-button.btn.readmore(type='primary' size='large' @click.native='readMore')
-        .btn-text 详细解读
+        .btn-text 分享
       .btn-plain(@click='resetQuiz') 重新测试
     .card-share(v-show='showPreview')
       .preview-guide
@@ -33,8 +49,8 @@
 </template>
 <script>
 import { Lazyload, Button } from 'mint-ui'
+import moment from 'moment'
 import html2canvas from 'html2canvas'
-import { mapState } from 'vuex'
 import content from '~/static/assets/quiz/testType.json'
 export default {
   data() {
@@ -43,6 +59,7 @@ export default {
       isShare: false,
       showPreview: false,
       dataURL: '',
+      type: '0',
       username: '',
       inputName: '',
       answerT: {
@@ -56,7 +73,8 @@ export default {
     let {inputName, type, result} = this.$route.query
     console.log({inputName, type, result})
     this.inputName = inputName
-    if (type === 1) {
+    this.type = type
+    if (type === '1') {
       this.answerT = content.answers.boys['b' + result]
     } else {
       this.answerT = content.answers.girls['g' + result]
@@ -69,9 +87,6 @@ export default {
     Button
   },
   computed: {
-    ...mapState({
-      inputName: 'inputName'
-    }),
     content() {
       return content
     },
@@ -80,6 +95,10 @@ export default {
     },
     qrcode() {
       return require('static/assets/quiz/images/blissr50.png')
+    },
+    dateNow() {
+      let datenow = new Date()
+      return moment(datenow).format('L')
     }
   },
   methods: {
@@ -127,27 +146,39 @@ export default {
 
 .header {
   font-size: 36px;
-  text-align: center;
   margin-bottom: 24px;
 }
 
 .username {
   font-size: 16px;
-  text-align: center;
-  margin-top: 50px;
+  margin-top: 40px;
   margin-bottom: 20px;
   color: white;
 }
 
 .title {
   font-size: 32px;
-  text-align: center;
   line-height: 30px;
   margin-bottom: 40px;
-  color: #EF9F58
+  color: white;
+  font-weight: bold;
 }
+.text-girl {
+  color: #FD97A3;
+}
+.text-boy {
+  color: #88DFFF;
+}
+
+.bg-girl {
+  background-color: #FD97A3;
+}
+.bg-boy {
+background-color: #88DFFF;
+}
+
+
 .img-match {
-  text-align: center;
   margin: 16px 0;
 }
 
@@ -171,8 +202,7 @@ export default {
   border-radius: 30px;
 }
 .share {
-  background: transparent;
-  border: 1px solid #EF9F58;
+  color: white;
 }
 .readmore {
   background: #EF9F58;
@@ -225,9 +255,8 @@ font-size: 12px;
 }
 
 .print-set {
-  margin: 10%;
   background-size: cover;
-  background-image: url('../../../static/assets/quiz/images/bg.jpg')
+  /* background-image: url('../../../static/assets/quiz/images/bg.jpg') */
 }
 
 .card-answer {

@@ -6,6 +6,8 @@ const topicRouter = require('../routes/topic')
 const commentRouter = require('../routes/comment')
 const apiRouter = require('../routes/api')
 const quizRouter = require('../routes/quiz')
+// test
+const testRouter = require('../routes/test')
 
 export const router = app => {
   const router = new Router()
@@ -21,6 +23,8 @@ export const router = app => {
   router.use('/v1/topics', topicRouter.routes(), topicRouter.allowedMethods())
   router.use('/v1/comments', commentRouter.routes(), commentRouter.allowedMethods())
   router.use('/v1/quiz', quizRouter.routes(), quizRouter.allowedMethods())
+  // test
+  router.use('/test', testRouter.routes(), testRouter.allowedMethods())
   // app.use(cors())
 
   app.use(router.routes())

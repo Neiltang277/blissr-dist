@@ -16,21 +16,27 @@ router.get('/', async (ctx, next) => {
 
 router.post('/', async (ctx, next) => {
   let content = ctx.request.body
-  new Topic({
-    title: content.title,
-    subject: content.subject,
-    summary: content.summary,
-    detail: content.detail,
-    members: content.memebers,
-    advocator: content.advocator,
-    comments: content.comments
-  }).save().then((topic) => {
-    console.log(topic)
-    ctx.body = topic
-  }).catch((error) => console.log(error))
+  let Topic = AV.Object.extend('Topic')
+  let topic = new Topic()
+  topic.set('title', content.title)
+  topic.set('subject', content.subject)
+  topic.set('summary', content.summary)
+  topic.set('detail', content.detail)
+  topic.set('advocator', content.advocator)
+
+  let acl = new AV.ACL()
+  acl.setPublicReadAccess(true)
+  acl.setWriteAccess(AV.User.current(), true)
+
+  topic.setACL(acl)
+  await topic.save()
+
+  ctx.body = topic
 })
 
 router.get('/detail/:id', async (ctx, next) => {
+  console.log(AV.User.current())
+  ctx.body = 'abs'
 })
 
 router.put('/comment/:id', async (ctx, next) => {
