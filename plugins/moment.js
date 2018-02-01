@@ -1,4 +1,4 @@
 import Vue from 'vue'
-import Moment from 'moment'
+import moment from 'moment'
 
-Vue.use(Moment)
+Vue.prototype.$moment = moment

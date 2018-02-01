@@ -8,23 +8,29 @@
           .title {{ answerT.title }}
           //- .img-match
           //-   img(v-lazy='answerT.image' style='width:100%')
-          .desc {{ answerT.desc }}
+          .desc(style='text-align:left;') {{ answerT.desc }}
       .reply-part
-        .blissr-info
-          .profile
-            img(:src='blissrLogo')
-            .nickname blissr
-          .date {{ dateNow }}
-        .blissr-reply
+        .blissr-info(style='padding: 10px 10% 0')
+          .profile(style='float: left; height: 50px;')
+            img(:src='blissrLogo' style='display:inline-block')
+            .nickname(style='display:inline-block;line-height:50px;vertical-align: text-bottom;margin-left:10px;') blissr
+          .date(style='float: right; height: 50px;line-height:50px') {{ dateNow }}
+        div(style='clear:both;height:0;overflow:hidden;')
+        .blissr-reply(style='padding: 10px 10% 10px')
           | 回复 {{ inputName }} :
           |  最与你水乳交融的类型是
-          span(:class='type=== "0"? "bg-boy" : "bg-girl"') 肥肥的胖橘猫
+          span(:class='type=== "1"? "text-boy" : "text-girl"') 肥肥的胖橘猫
           | !
       hr
       .user-imgs
-        .user-img
-        .user-desc 等41只 肥肥的胖橘猫 给你点赞
-
+        .user-img(style='display:inline-block;padding: 10px 10px 10px 10%')
+          //- img(:src='love' style='display:inline-block;width:20px;margin:5px;')
+          img(:src='blissrLogo' style='display:inline-block;width:20px;margin:5px;')
+          img(:src='blissrLogo' style='display:inline-block;width:20px;margin:5px;')
+          img(:src='blissrLogo' style='display:inline-block;width:20px;margin:5px;')
+        .user-desc(:class='type=== "1"? "text-boy" : "text-girl"'  style='display:inline-block;line-height:30px;vertical-align:text-bottom;font-size:12px;') 
+          | 等 41只 肥肥的胖橘猫 点赞
+      hr
       .share-footer(v-show='isShare')
         .qrcode
           img(:src='qrcode', style='background-color: white')
@@ -35,9 +41,9 @@
           img(:src='blissrLogo', style='background-color: white')
     .footer(v-show='!isShare')
       mt-button.btn.share(type='primary' size='large' @click.native='shareIt'  :class='type=== "0"? "bg-boy" : "bg-girl"')
-        .btn-text(style='color: #EF9F58') 肥肥的胖橘猫
+        .btn-text(style='') 肥肥的胖橘猫
       mt-button.btn.readmore(type='primary' size='large' @click.native='readMore')
-        .btn-text 分享
+        .btn-text(:class='type=== "0"? "text-boy" : "text-girl"') 分享
       .btn-plain(@click='resetQuiz') 重新测试
     .card-share(v-show='showPreview')
       .preview-guide
@@ -49,7 +55,7 @@
 </template>
 <script>
 import { Lazyload, Button } from 'mint-ui'
-import moment from 'moment'
+// import moment from 'moment'
 import html2canvas from 'html2canvas'
 import content from '~/static/assets/quiz/testType.json'
 export default {
@@ -93,12 +99,15 @@ export default {
     blissrLogo() {
       return require('static/assets/quiz/images/blissr50.png')
     },
+    love() {
+      return require('static/assets/icon/love.png')
+    },
     qrcode() {
       return require('static/assets/quiz/images/blissr50.png')
     },
     dateNow() {
       let datenow = new Date()
-      return moment(datenow).format('L')
+      return this.$moment(datenow).format('L')
     }
   },
   methods: {
@@ -205,7 +214,8 @@ background-color: #88DFFF;
   color: white;
 }
 .readmore {
-  background: #EF9F58;
+  background: white;
+  border: 1px solid grey;
 }
 .btn-text {
   margin: 10px 8px;
