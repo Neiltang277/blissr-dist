@@ -1,6 +1,5 @@
 const testType = require('../../../static/assets/quiz/testType.json')
 
-
 export const index = async () => {
   let title = testType.title
   let summary = testType.summary

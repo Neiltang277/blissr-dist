@@ -12,24 +12,22 @@
       .reply-part
         .blissr-info(style='padding: 10px 10% 0')
           .profile(style='float: left; height: 50px;')
-            img(:src='blissrLogo' style='display:inline-block')
-            .nickname(style='display:inline-block;line-height:50px;vertical-align: text-bottom;margin-left:10px;') blissr
+            img(:src='blissrLogo' style='display:inline-block;border: 1px solid grey;width: 40px;')
+            .nickname(style='display:inline-block;line-height:50px;vertical-align: text-bottom;margin-left:10px; font-weight: bold') blissr
           .date(style='float: right; height: 50px;line-height:50px') {{ dateNow }}
         div(style='clear:both;height:0;overflow:hidden;')
-        .blissr-reply(style='padding: 10px 10% 10px')
+        .blissr-reply(style='padding: 10px 10% 10px; font-size: 14px; color: #999;margin-bottom: 10px;')
           | 回复 {{ inputName }} :
           |  最与你水乳交融的类型是
-          span(:class='type=== "1"? "text-boy" : "text-girl"') 肥肥的胖橘猫
-          | !
+          span(:class='type=== "0"? "text-boy" : "text-girl"' style='font-weight: bold') {{ oppoType }}
+          |  !
       hr
-      .user-imgs
-        .user-img(style='display:inline-block;padding: 10px 10px 10px 10%')
+      .user-img
+        .user-img(style='display:inline-block;padding: 6px 10px 6px 10%')
           //- img(:src='love' style='display:inline-block;width:20px;margin:5px;')
-          img(:src='blissrLogo' style='display:inline-block;width:20px;margin:5px;')
-          img(:src='blissrLogo' style='display:inline-block;width:20px;margin:5px;')
-          img(:src='blissrLogo' style='display:inline-block;width:20px;margin:5px;')
-        .user-desc(:class='type=== "1"? "text-boy" : "text-girl"'  style='display:inline-block;line-height:30px;vertical-align:text-bottom;font-size:12px;') 
-          | 等 41只 肥肥的胖橘猫 点赞
+          img(v-for='profile in profiles' :src='profile' style='display:inline-block;width:20px;margin:5px;border-radius: 50%;')
+        .user-desc(style='display:inline-block;line-height:30px;vertical-align:text-bottom;font-size:12px;color: #999')
+          | 等 41只 {{ oppoType }} 点赞
       hr
       .share-footer(v-show='isShare')
         .qrcode
@@ -41,9 +39,9 @@
           img(:src='blissrLogo', style='background-color: white')
     .footer(v-show='!isShare')
       mt-button.btn.share(type='primary' size='large' @click.native='shareIt'  :class='type=== "0"? "bg-boy" : "bg-girl"')
-        .btn-text(style='') 肥肥的胖橘猫
+        .btn-text(style='font-weight: bold') {{ oppoType }}
       mt-button.btn.readmore(type='primary' size='large' @click.native='readMore')
-        .btn-text(:class='type=== "0"? "text-boy" : "text-girl"') 分享
+        .btn-text(:class='type=== "0"? "text-boy" : "text-girl"' style='font-weight:bold;margin-top: 10px;') 立即分享
       .btn-plain(@click='resetQuiz') 重新测试
     .card-share(v-show='showPreview')
       .preview-guide
@@ -68,6 +66,8 @@ export default {
       type: '0',
       username: '',
       inputName: '',
+      profiles: [],
+      oppoType: '',
       answerT: {
         title: '小奶狗',
         image: 'http://dummyimage.com/300x200',
@@ -77,14 +77,43 @@ export default {
   },
   beforeMount: function () {
     let {inputName, type, result} = this.$route.query
+    let randomProfile = 1
+    let randomSet = []
     console.log({inputName, type, result})
     this.inputName = inputName
     this.type = type
     if (type === '1') {
       this.answerT = content.answers.boys['b' + result]
+      for (let i = 0; i < 3; i++) {
+        randomProfile = parseInt(Math.random() * 12 + 1)
+        for (let item in randomSet) {
+          if (randomSet[item] === randomProfile) {
+            randomProfile = parseInt(Math.random() * 12 + 1)
+          } else {
+            randomSet.push(randomProfile)
+          }
+        }
+        this.profiles.push(require('static/assets/profile/' + 'g' + randomProfile + '.jpg'))
+      }
+      this.oppoType = content.answers.girls['g' + result].title
     } else {
       this.answerT = content.answers.girls['g' + result]
+      for (let i = 0; i < 3; i++) {
+        randomProfile = parseInt(Math.random() * 12 + 1)
+        for (let item in randomSet) {
+          if (randomSet[item] === randomProfile) {
+            randomProfile = parseInt(Math.random() * 12 + 1)
+          } else {
+            randomSet.push(randomProfile)
+          }
+        }
+        this.profiles.push(require('static/assets/profile/' + 'b' + randomProfile + '.jpg'))
+      }
+      this.oppoType = content.answers.boys['b' + result].title
+      // console.log(content.answer.girls['b' + result])
+      // this.oppoType = content.answer.boys['b' + result]
     }
+
     history.pushState(null, null, location.href)
   },
 
@@ -202,6 +231,7 @@ background-color: #88DFFF;
 .footer {
   width: 100%;
   padding: 0 10%;
+  margin-top: 20px;
   text-align: center;
   background: white;
 }

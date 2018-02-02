@@ -58,7 +58,7 @@ const api = {
 }
 
 export default class Wechat {
-  constructor (opts) {
+  constructor(opts) {
     this.opts = Object.assign({}, opts)
     this.appID = opts.appID
     this.appSecret = opts.appSecret
@@ -68,5 +68,10 @@ export default class Wechat {
     this.saveTicket = opts.saveTicket
 
     this.fetchAccessToken()
+  }
+
+  createQrcode(token, opts) {
+    const url = api.qrcode.create + 'access_token=' + token
+    return {method: 'POST', url: url, body: opts}
   }
 }

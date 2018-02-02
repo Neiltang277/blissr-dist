@@ -15,6 +15,7 @@ router.all('/hear', async (ctx, next) => {
 router.get('/redirect', async (ctx, next) => {
   await wechat.redirect(ctx, next)
 })
+
 router.get('/oauth', async (ctx, next) => {
   await wechat.oauth(ctx, next)
 })
