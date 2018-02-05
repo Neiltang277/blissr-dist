@@ -18,8 +18,6 @@ export const questions = async () => {
 
 export const feedback = async (selection) => {
   let baseUrl = 'https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket='
-  let id = ctx.params.id
-  
 
   return 'http://www.baidu.com'
 }

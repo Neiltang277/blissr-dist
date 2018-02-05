@@ -3,7 +3,7 @@ import getRawBody from 'raw-body'
 import * as util from './util'
 
 export default function (opts, reply) {
-  return async function wechatMiddle (ctx, next) {
+  return async function wechatMiddle(ctx, next) {
     const token = opts.token
     const {
       signature,

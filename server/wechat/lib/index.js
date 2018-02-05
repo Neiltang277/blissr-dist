@@ -1,9 +1,9 @@
 import request from 'request-promise'
-import fs from 'fs'
-import * as _ from 'lodash'
-import {
-  sign
-} from './util'
+// import fs from 'fs'
+// import * as _ from 'lodash'
+// import {
+//   sign
+// } from './util'
 
 const base = 'https://api.weixin.qq.com/cgi-bin/'
 const api = {
@@ -71,7 +71,7 @@ export default class Wechat {
   }
 
   // entrance
-  async handle (operation, ...args) {
+  async handle(operation, ...args) {
     const tokenData = await this.fetchAccessToken()
     const options = this[operation](tokenData.access_token, ...args)
     const data = await this.request(options)
@@ -79,9 +79,10 @@ export default class Wechat {
     return data
   }
   // token
-  async fetchAccessToken () {
+  async fetchAccessToken() {
     let data = await this.getAccessToken()
-
+    // console.log('fetchAt')
+    // console.log(data)
     if (!this.isValidToken(data, 'access_token')) {
       data = await this.updateAccessToken()
     }
@@ -91,9 +92,57 @@ export default class Wechat {
     return data
   }
 
+  isValidToken(data, name) {
+    if (!data || !data.name || !data.expires_in) {
+      // console.log('isValid')
+      // console.log(data)
+      return false
+    }
+
+    const expiresIn = data.expires_in
+    const now = (new Date().getTime())
+
+    if (now < expiresIn) {
+      console.log('treu')
+      return true
+    } else {
+      console.log('false')
+      return false
+    }
+  }
+
+  async updateAccessToken() {
+    const url = api.accessToken + '&appid=' + this.appID + '&secret=' + this.appSecret
+
+    const data = await this.request({ url: url })
+    const now = (new Date().getTime())
+    const expiresIn = now + (data.expires_in - 20) * 1000
+
+    data.expires_in = expiresIn
+
+    return data
+  }
+
+  async request(options) {
+    options = Object.assign({}, options, { json: true })
+    try {
+      const response = await request(options)
+      return response
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  getUserInfo(token, openId, lang) {
+    const url = `${api.user.info}access_token=${token}&openid=${openId}&lang=${lang || 'zh_CN'}`
+    return { url: url }
+  }
 
   createQrcode(token, opts) {
     const url = api.qrcode.create + 'access_token=' + token
     return {method: 'POST', url: url, body: opts}
+  }
+
+  uploadMaterial(token, type, material, permanent) {
   }
 }
