@@ -70,6 +70,28 @@ export default class Wechat {
     this.fetchAccessToken()
   }
 
+  // entrance
+  async handle (operation, ...args) {
+    const tokenData = await this.fetchAccessToken()
+    const options = this[operation](tokenData.access_token, ...args)
+    const data = await this.request(options)
+
+    return data
+  }
+  // token
+  async fetchAccessToken () {
+    let data = await this.getAccessToken()
+
+    if (!this.isValidToken(data, 'access_token')) {
+      data = await this.updateAccessToken()
+    }
+
+    await this.saveAccessToken(data)
+
+    return data
+  }
+
+
   createQrcode(token, opts) {
     const url = api.qrcode.create + 'access_token=' + token
     return {method: 'POST', url: url, body: opts}
