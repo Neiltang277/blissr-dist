@@ -1,7 +1,7 @@
 <template lang="pug">
   .main-answer
     #output.print-set(v-show='!showPreview')
-      .card-answer(:class='type=== "1"? "bg-boy" : "bg-girl"')
+      .card-answer(:class='getBgType')
         //- .header 测试结果
         .body
           .username {{ inputName }} 是一只:
@@ -19,29 +19,31 @@
         .blissr-reply(style='padding: 10px 10% 10px; font-size: 14px; color: #999;margin-bottom: 10px;')
           | 回复 {{ inputName }} :
           |  最与你水乳交融的类型是
-          span(:class='type=== "0"? "text-boy" : "text-girl"' style='font-weight: bold') {{ oppoType }}
+          span(:class='getOpTextType' style='font-weight: bold') {{ oppoType }}
           |  !
-      hr
+      .sep
       .user-img
         .user-img(style='display:inline-block;padding: 6px 10px 6px 10%')
           //- img(:src='love' style='display:inline-block;width:20px;margin:5px;')
           img(v-for='profile in profiles' :src='profile' style='display:inline-block;width:20px;margin:5px;border-radius: 50%;')
         .user-desc(style='display:inline-block;line-height:30px;vertical-align:text-bottom;font-size:12px;color: #999')
-          | 等 41只 {{ oppoType }} 点赞
-      hr
+          | 等 {{ countUser }} 只 
+          span(style='font-weight: bold;') {{ oppoType }} 
+          | 点赞
+      .sep
       .share-footer(v-show='isShare')
         .qrcode
           img(:src='qrcode', style='background-color: white')
-        .quiz-info
+        .quiz-info(style='color:black')
           .quiz-title 快来测一测你的隐藏属性
           .quiz-guide {{ guide }}
         .logo-blissr
           img(:src='blissrLogo', style='background-color: white')
     .footer(v-show='!isShare')
-      mt-button.btn.share(type='primary' size='large' @click.native='shareIt'  :class='type=== "0"? "bg-boy" : "bg-girl"')
+      mt-button.btn.share(type='primary' size='large' @click.native='readMore'  :class='getOpBgType')
         .btn-text(style='font-weight: bold') {{ oppoType }}
-      mt-button.btn.readmore(type='primary' size='large' @click.native='readMore')
-        .btn-text(:class='type=== "0"? "text-boy" : "text-girl"' style='font-weight:bold;margin-top: 10px;') 立即分享
+      mt-button.btn.readmore(type='primary' size='large' @click.native='shareIt' style='margin-top:10px;')
+        .btn-text(:class='getOpTextType' style='font-weight:bold;margin-top: 10px;') 立即分享
       .btn-plain(@click='resetQuiz') 重新测试
     .card-share(v-show='showPreview')
       .preview-guide
@@ -137,6 +139,21 @@ export default {
     dateNow() {
       let datenow = new Date()
       return this.$moment(datenow).format('L')
+    },
+    countUser() {
+      return parseInt(Math.random() * 100 + 30)
+    },
+    getBgType() {
+      return this.type === '1' ? 'bg-boy' : 'bg-girl'
+    },
+    getOpBgType() {
+      return this.type === '0' ? 'bg-boy' : 'bg-girl'
+    },
+    getTextType() {
+      return this.type === '1' ? 'text-boy' : 'text-girl'
+    },
+    getOpTextType() {
+      return this.type === '0' ? 'text-boy' : 'text-girl'
     }
   },
   methods: {
@@ -291,7 +308,6 @@ font-size: 12px;
   display: flex;
   flex-direction: row;
   margin-top: 40px;
-  color: white;
 }
 
 .print-set {
@@ -311,6 +327,13 @@ font-size: 12px;
   line-height: 60px;
   color: #EF9F58;
   font-weight: bold;
+  border-bottom: 1px solid grey;
+}
+
+
+.sep {
+  display: block;
+  line-height: 1px;
   border-bottom: 1px solid grey;
 }
 
